@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch LH.js (inspect-brk)",
+      "program": "${workspaceFolder}/LH.js",
+      "cwd": "${workspaceFolder}",
+      "runtimeArgs": ["--inspect-brk=9229"],
+      "envFile": "${workspaceFolder}/.env",
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to LH.js",
+      "port": 9229,
+      "restart": false,
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ]
+}
