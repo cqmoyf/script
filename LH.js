@@ -23,14 +23,14 @@ const activityNos = [
     '11111111111736501868255956070000'   // 第二个活动编号
 ];
 const activityNos_lottery = [
-    'AP260010Y6WP4KCV',  // 第一个抽奖活动编号
+    // 'AP260010Y6WP4KCV',  // 第一个抽奖活动编号
     'AP25O123K1HEE8DB'   // 第二个抽奖活动编号
 ];
 //get userCookie
 const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName)) || [];
 // //notify
-const notify = $.isNode() ? require('./sendNotify') : '';
-$.notifyMsg = []
+// const notify = $.isNode() ? require('./sendNotify') : '';
+// $.notifyMsg = []
 //debug
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 $.doFlag = { "true": "✅", "false": "⛔️" };
@@ -68,7 +68,7 @@ async function main() {
                 $.avatar = "";
 
             // 签到
-            const reward_num = await signin(user);
+            // const reward_num = await signin(user);
             if ($.ckStatus) {
                 // 抽奖签到
                 await lotterySignin(user)
@@ -124,6 +124,9 @@ async function signin(user) {
             const reward_num = res?.data?.is_popup == 1 ? res?.data?.reward_info[0]?.reward_num : 0
             results.push(reward_num); // 将每次签到的结果存储到数组中
             $.log(`${$.doFlag[res?.data?.is_popup == 1]} ${res?.data?.is_popup == 1 ? '每日签到: 成功, 获得' + res?.data?.reward_info[0]?.reward_num + '分' : '每日签到: 今日已签到'}\n`);
+            const delaySec = Math.floor(Math.random() * 10) + 1;
+            $.log(`⏳ 随机等待 ${delaySec} 秒...`);
+            await $.wait(delaySec * 1000);
         }
         return results.reduce((acc, cur) => acc + cur, 0); // 返回所有签到结果的总和
     } catch (e) {
@@ -150,12 +153,16 @@ async function lotterySignin(user) {
                 type: 'post',
                 dataType: "json",
                 body: {
-                    "component_no" : "CU15A06D41Y9ZECJ",
+                    // "component_no" : "CU15A06D41Y9ZECJ",
+                    "component_no" : "CO13545A08P7EI9Y",
                     "activity_no": activityNo
                 }
             }
             let res = await fetch(opts);
-            $.log(`${$.doFlag[res?.code == '0000']} ${res?.code == '0000' ? '抽奖签到: 成功, 获得' + res?.data?.ticket_times + '次抽奖机会' : '抽奖签到: ' + res?.message}\n`);
+            $.log(`${$.doFlag[res?.code == '0000']} ${res?.code == '0000' ? '抽奖签到: 成功, 获得' + res?.data?.chance + '次抽奖机会' : '抽奖签到: ' + res?.message}\n`);
+            const delaySec = Math.floor(Math.random() * 10) + 1;
+            $.log(`⏳ 随机等待 ${delaySec} 秒...`);
+            await $.wait(delaySec * 1000);
         }
     } catch (e) {
         $.log(`⛔️ 抽奖签到失败！${e}\n`)
@@ -190,6 +197,9 @@ async function lotteryClock(user) {
             }
             let res = await fetch(opts);
             $.log(`${$.doFlag[res?.code == '0000']} ${res?.code == '0000' ? '抽奖成功, 获得' + res?.data?.desc : '抽奖: ' + res?.message}\n`);
+            const delaySec = Math.floor(Math.random() * 10) + 1;
+            $.log(`⏳ 随机等待 ${delaySec} 秒...`);
+            await $.wait(delaySec * 1000);
     }
     } catch (e) {
         $.log(`⛔️ 抽奖失败！${e}\n`)
