@@ -23,14 +23,14 @@ const activityNos = [
     '11111111111736501868255956070000'   // 第二个活动编号
 ];
 const activityNos_lottery = [
-    // 'AP260010Y6WP4KCV',  // 第一个抽奖活动编号
+    'AP260010Y6WP4KCV',  // 第一个抽奖活动编号
     'AP25O123K1HEE8DB'   // 第二个抽奖活动编号
 ];
 //get userCookie
 const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName)) || [];
 // //notify
-// const notify = $.isNode() ? require('./sendNotify') : '';
-// $.notifyMsg = []
+ const notify = $.isNode() ? require('./sendNotify') : '';
+ $.notifyMsg = []
 //debug
 $.is_debug = ($.isNode() ? process.env.IS_DEDUG : $.getdata('is_debug')) || 'false';
 $.doFlag = { "true": "✅", "false": "⛔️" };
@@ -68,7 +68,7 @@ async function main() {
                 $.avatar = "";
 
             // 签到
-            // const reward_num = await signin(user);
+            const reward_num = await signin(user);
             if ($.ckStatus) {
                 // 抽奖签到
                 await lotterySignin(user)
