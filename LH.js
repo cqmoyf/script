@@ -22,9 +22,9 @@ const activityNos = [
     '11111111111686241863606037740000',  // 第一个活动编号
     '11111111111736501868255956070000'   // 第二个活动编号
 ];
-const activityNos_lottery = [
-    'AP260010Y6WP4KCV',  // 第一个抽奖活动编号
-    'AP25O123K1HEE8DB'   // 第二个抽奖活动编号
+const lotteryConfigs = [
+    { activityNo: 'AP260010Y6WP4KCV', componentNo: 'CO13545A08P7EI9Y' },
+    { activityNo: 'AP25O123K1HEE8DB', componentNo: 'CU15A06D41Y9ZECJ' }
 ];
 //get userCookie
 const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName)) || [];
@@ -136,7 +136,8 @@ async function signin(user) {
 // 抽奖签到
 async function lotterySignin(user) {
     try {
-        for (const activityNo of activityNos_lottery) {
+        for (const config of lotteryConfigs) {
+            const { activity_no: activityNo, component_no: componentNo } = config;
             const opts = {
                 url: "https://gw2c-hw-open.longfor.com/llt-gateway-prod/api/v1/activity/auth/lottery/sign",
                 headers: {
@@ -171,7 +172,8 @@ async function lotterySignin(user) {
 // 抽奖
 async function lotteryClock(user) {
     try {
-        for (const activityNo of activityNos_lottery) {
+        for (const config of lotteryConfigs) {
+            const { activity_no: activityNo, component_no: componentNo } = config;
             const opts = {
                 url: "https://gw2c-hw-open.longfor.com/llt-gateway-prod/api/v1/activity/auth/lottery/click",
                 headers: {
@@ -189,10 +191,8 @@ async function lotteryClock(user) {
                 dataType: "json",
                 body: {
                     "activity_no": activityNo,
-                    "use_luck": 0,
                     "batch_no" : "",
-                    "component_no" : "CU15A06D41Y9ZECJ",
-                    "activity_no" : "AP260010Y6WP4KCV"
+                    "component_no" : "CU15A06D41Y9ZECJ"
                 }
             }
             let res = await fetch(opts);
