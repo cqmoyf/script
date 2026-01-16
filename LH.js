@@ -23,8 +23,8 @@ const activityNos = [
     '11111111111736501868255956070000'   // 第二个活动编号
 ];
 const lotteryConfigs = [
-    { activityNo: 'AP260010Y6WP4KCV', componentNo: 'CU15A06D41Y9ZECJ' },
-    { activityNo: 'AP25O123K1HEE8DB', componentNo: 'CO13545A08P7EI9Y' }
+    { activity_no: 'AP260010Y6WP4KCV', component_no: 'CU15A06D41Y9ZECJ' },
+    { activity_no: 'AP25O123K1HEE8DB', component_no: 'CO13545A08P7EI9Y' }
 ];
 //get userCookie
 const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName)) || [];
@@ -155,7 +155,7 @@ async function lotterySignin(user) {
                 dataType: "json",
                 body: {
                     // "component_no" : "CU15A06D41Y9ZECJ",
-                    "component_no" : "CO13545A08P7EI9Y",
+                    "component_no" : componentNo,
                     "activity_no": activityNo
                 }
             }
@@ -192,7 +192,7 @@ async function lotteryClock(user) {
                 body: {
                     "activity_no": activityNo,
                     "batch_no" : "",
-                    "component_no" : "CU15A06D41Y9ZECJ"
+                    "component_no" : componentNo
                 }
             }
             let res = await fetch(opts);
