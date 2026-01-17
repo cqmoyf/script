@@ -1,7 +1,7 @@
 /**************************************
 脚本名称：龙湖签到 感谢leiyiyan、Sliverkiss提供的脚本帮助
 脚本作者：@cqmoyf
-更新日期：2025-01-15
+更新日期：2025-01-17
 
 ⚠️免责声明
 ------------------------------------------
@@ -124,7 +124,7 @@ async function signin(user) {
             const reward_num = res?.data?.is_popup == 1 ? res?.data?.reward_info[0]?.reward_num : 0
             results.push(reward_num); // 将每次签到的结果存储到数组中
             $.log(`${$.doFlag[res?.data?.is_popup == 1]} ${res?.data?.is_popup == 1 ? '每日签到: 成功, 获得' + res?.data?.reward_info[0]?.reward_num + '分' : '每日签到: 今日已签到'}\n`);
-            const delaySec = Math.floor(Math.random() * 10) + 1;
+            const delaySec = Math.floor(Math.random() * 5) + 1;
             $.log(`⏳ 随机等待 ${delaySec} 秒...`);
             await $.wait(delaySec * 1000);
         }
@@ -161,7 +161,7 @@ async function lotterySignin(user) {
             }
             let res = await fetch(opts);
             $.log(`${$.doFlag[res?.code == '0000']} ${res?.code == '0000' ? '抽奖签到: 成功, 获得' + res?.data?.chance + '次抽奖机会' : '抽奖签到: ' + res?.message}\n`);
-            const delaySec = Math.floor(Math.random() * 10) + 1;
+            const delaySec = Math.floor(Math.random() * 5) + 1;
             $.log(`⏳ 随机等待 ${delaySec} 秒...`);
             await $.wait(delaySec * 1000);
         }
@@ -196,8 +196,8 @@ async function lotteryClock(user) {
                 }
             }
             let res = await fetch(opts);
-            $.log(`${$.doFlag[res?.code == '0000']} ${res?.code == '0000' ? '抽奖成功, 获得' + res?.data?.desc : '抽奖: ' + res?.message}\n`);
-            const delaySec = Math.floor(Math.random() * 10) + 1;
+            $.log(`${$.doFlag[res?.code == '0000']} ${res?.code == '0000' ? '抽奖成功, 获得' + res?.data?.prize_name : '抽奖: ' + res?.message}\n`);
+            const delaySec = Math.floor(Math.random() * 5) + 1;
             $.log(`⏳ 随机等待 ${delaySec} 秒...`);
             await $.wait(delaySec * 1000);
     }
