@@ -23,8 +23,7 @@ const activityNos = [
     '11111111111736501868255956070000'   // 第二个活动编号
 ];
 const lotteryConfigs = [
-    { activity_no: 'AP260010Y6WP4KCV', component_no: 'CU15A06D41Y9ZECJ' },
-    { activity_no: 'AP25O123K1HEE8DB', component_no: 'CO13545A08P7EI9Y' }
+    { activity_no: 'AP26E022L8FTDAWH', component_no: 'CF17F20C54L0SYEZ' }
 ];
 //get userCookie
 const userCookie = $.toObj($.isNode() ? process.env[ckName] : $.getdata(ckName)) || [];
