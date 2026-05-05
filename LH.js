@@ -1,7 +1,7 @@
 /**************************************
 脚本名称：龙湖签到 感谢leiyiyan、Sliverkiss提供的脚本帮助
 脚本作者：@cqmoyf
-更新日期：2025-01-17
+更新日期：2026-05-05
 
 ⚠️免责声明
 ------------------------------------------
@@ -106,7 +106,7 @@ async function signin(user) {
                 url: "https://gw2c-hw-open.longfor.com/lmarketing-task-api-mvc-prod/openapi/task/v1/signature/clock",
                 headers: {
                     'cookie': user.cookie,
-                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 &MAIAWebKit_iOS_com.longfor.supera_1.24.0_202603271516_Default_3.3.1.0',
+                    User-Agent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 &MAIAWebKit_iOS_com.longfor.supera_1.24.0_202603271516_Default_3.3.1.0',
                     // 'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.48(0x18003029) NetType/4G Language/zh_CN miniProgram/wx50282644351869da',
                     'token': user.token,
                     'x-lf-dxrisk-token': user['x-lf-dxrisk-token'],
@@ -271,12 +271,30 @@ async function getLotteryConfigs(user) {
         const opts = {
             url: "https://gw2c-hw-open.longfor.com/supera/member/api/bff/pages/v1_24_0/publicApi/v1/pageConfig",
             headers: {
-                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.67(0x1800432e) NetType/WIFI Language/zh_CN miniProgram/wx50282644351869da',
-                'token': user.token,
-                'X-Gaia-Api-Key': 'c06753f1-3e68-437d-b592-b94656ea5517'
+                // 'Host': 'gw2c-hw-open.longfor.com',
+                // 'Cookie': user.cookie,
+                // 'X-Client-Type': 'app',
+                // 'User-Agent': 'com.longfor.supera/1.24.0 iOS/26.4.2',
+                'X-LF-Api-Version': 'v1_24_0',
+                // 'X-Gaia-Api-Key': '98717e7a-a039-46af-8143-be7558a089c0',
+                // 'lmToken': user.token,
+                'X-LF-Bucode': user['x-lf-bu-code'] || 'L00602',
+                // 'X-LF-Bundle-id': 'com.longfor.supera',
+                // 'X-LF-Channel': user['x-lf-channel'] || 'L0',
+                // 'Connection': 'keep-alive',
+                // 'X-LF-Stage': 'RELEASE',
+                // 'X-LF-App-Version': '1.24.0',
+                // 'Authorization': `Bearer ${user.token}`,
+                // 'Accept-Language': 'zh-Hans-CN;q=1.0, en-CN;q=0.9',
+                // 'Accept': '*/*',
+                // 'Content-Type': 'application/json',
+                // 'Accept-Encoding': 'gzip, deflate'
             },
-            type: 'get',
-            dataType: "json"
+            type: 'post',
+            dataType: "json",
+            body: {
+                "pageCode": "L0mine"
+            }
         }
         let res = await fetch(opts);
         if (res?.data?.components) {
@@ -286,7 +304,7 @@ async function getLotteryConfigs(user) {
                     for (const child of comp.children) {
                         if (child.taskId == '104048' && child.jumpUrl) {
                             const url = child.jumpUrl;
-                            const match = url.match(/\/([^\/]+)\/([^\/]+)\//);
+                            const match = url.match(/llt.longfor.com\/([^\/]+)\/([^\/]+)\//);
                             if (match) {
                                 const activity_no = match[1];
                                 const component_no = match[2];
