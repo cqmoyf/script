@@ -278,7 +278,7 @@ async function getLotteryConfigs(user) {
                 'X-LF-Api-Version': 'v1_24_0',
                 // 'X-Gaia-Api-Key': '98717e7a-a039-46af-8143-be7558a089c0',
                 // 'lmToken': user.token,
-                'X-LF-Bucode': user['x-lf-bu-code'] || 'L00602',
+                'X-LF-Bucode': user['x-lf-bu-code'] || 'L00602'
                 // 'X-LF-Bundle-id': 'com.longfor.supera',
                 // 'X-LF-Channel': user['x-lf-channel'] || 'L0',
                 // 'Connection': 'keep-alive',
