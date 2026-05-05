@@ -271,24 +271,8 @@ async function getLotteryConfigs(user) {
         const opts = {
             url: "https://gw2c-hw-open.longfor.com/supera/member/api/bff/pages/v1_24_0/publicApi/v1/pageConfig",
             headers: {
-                // 'Host': 'gw2c-hw-open.longfor.com',
-                // 'Cookie': user.cookie,
-                // 'X-Client-Type': 'app',
-                // 'User-Agent': 'com.longfor.supera/1.24.0 iOS/26.4.2',
                 'X-LF-Api-Version': 'v1_24_0',
-                // 'X-Gaia-Api-Key': '98717e7a-a039-46af-8143-be7558a089c0',
-                // 'lmToken': user.token,
-                'X-LF-Bucode': user['x-lf-bu-code'] || 'L00602'
-                // 'X-LF-Bundle-id': 'com.longfor.supera',
-                // 'X-LF-Channel': user['x-lf-channel'] || 'L0',
-                // 'Connection': 'keep-alive',
-                // 'X-LF-Stage': 'RELEASE',
-                // 'X-LF-App-Version': '1.24.0',
-                // 'Authorization': `Bearer ${user.token}`,
-                // 'Accept-Language': 'zh-Hans-CN;q=1.0, en-CN;q=0.9',
-                // 'Accept': '*/*',
-                // 'Content-Type': 'application/json',
-                // 'Accept-Encoding': 'gzip, deflate'
+                'X-LF-Bucode': 'L00602'
             },
             type: 'post',
             dataType: "json",
