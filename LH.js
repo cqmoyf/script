@@ -22,7 +22,7 @@ const activityNos = [
     '11111111111686241863606037740000',  // 第一个活动编号
     '11111111111736501868255956070000'   // 第二个活动编号
 ];
-const lotteryConfigs = [
+let lotteryConfigs = [
     { activity_no: 'AP26E022L8FTDAWH', component_no: 'CF17F20C54L0SYEZ' }
 ];
 //get userCookie
@@ -69,6 +69,11 @@ async function main() {
             // 签到
             const reward_num = await signin(user);
             if ($.ckStatus) {
+                // 获取抽奖配置
+                const newLotteryConfigs = await getLotteryConfigs(user);
+                if (newLotteryConfigs.length > 0) {
+                    lotteryConfigs = newLotteryConfigs;
+                }
                 // 抽奖签到
                 await lotterySignin(user)
                 // 抽奖
@@ -260,6 +265,46 @@ async function getBalance(user) {
         $.log(`⛔️ 查询用户珑珠失败！${e}\n`)
     }
 }
+//获取抽奖配置
+async function getLotteryConfigs(user) {
+    try {
+        const opts = {
+            url: "https://gw2c-hw-open.longfor.com/supera/member/api/bff/pages/v1_24_0/publicApi/v1/pageConfig",
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.67(0x1800432e) NetType/WIFI Language/zh_CN miniProgram/wx50282644351869da',
+                'token': user.token,
+                'X-Gaia-Api-Key': 'c06753f1-3e68-437d-b592-b94656ea5517'
+            },
+            type: 'get',
+            dataType: "json"
+        }
+        let res = await fetch(opts);
+        if (res?.data?.components) {
+            const components = res.data.components;
+            for (const comp of components) {
+                if (comp.children) {
+                    for (const child of comp.children) {
+                        if (child.taskId == '104048' && child.jumpUrl) {
+                            const url = child.jumpUrl;
+                            const match = url.match(/\/([^\/]+)\/([^\/]+)\//);
+                            if (match) {
+                                const activity_no = match[1];
+                                const component_no = match[2];
+                                $.log(`🎉 获取抽奖配置成功: activity_no=${activity_no}, component_no=${component_no}\n`);
+                                return [{ activity_no, component_no }];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $.log(`⛔️ 获取抽奖配置失败，未找到相关数据\n`);
+        return [];
+    } catch (e) {
+        $.log(`⛔️ 获取抽奖配置失败！${e}\n`);
+        return [];
+    }
+}
 //获取Cookie
 async function getCookie() {
     try {
@@ -269,7 +314,7 @@ async function getCookie() {
         if (!header.cookie) throw new Error("获取Cookie错误，值为空");
 
         const newData = {
-            "userName": '微信用户',
+            "userName": header.token,
             'x-lf-dxrisk-token': header['x-lf-dxrisk-token'],
             "x-lf-channel": header['x-lf-channel'],
             "token": header.token,
