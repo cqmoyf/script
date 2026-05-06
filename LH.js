@@ -111,8 +111,10 @@ async function signin(user) {
                     'token': user.token,
                     'x-lf-dxrisk-token': user['x-lf-dxrisk-token'],
                     'x-gaia-api-key': 'c06753f1-3e68-437d-b592-b94656ea5517',
-                    'x-lf-bu-code': user['x-lf-bu-code'],
-                    'x-lf-channel': user['x-lf-channel'],
+                    // 'x-lf-bu-code': user['x-lf-bu-code'],
+                    'x-lf-bu-code': 'C20400',
+                    // 'x-lf-channel': user['x-lf-channel'],
+                    'x-lf-channel': 'C2',
                     'origin': 'https://longzhu.longfor.com',
                     'referer': 'https://longzhu.longfor.com/',
                     'x-lf-dxrisk-source': user['x-lf-dxrisk-source'],
@@ -143,6 +145,7 @@ async function lotterySignin(user) {
     try {
         for (const config of lotteryConfigs) {
             const { activity_no: activityNo, component_no: componentNo } = config;
+             $.log(`已经配置 ${activityNo}和${componentNo}`); //0505增加调试
             const opts = {
                 url: "https://gw2c-hw-open.longfor.com/llt-gateway-prod/api/v1/activity/auth/lottery/sign",
                 headers: {
