@@ -111,10 +111,8 @@ async function signin(user) {
                     'token': user.token,
                     'x-lf-dxrisk-token': user['x-lf-dxrisk-token'],
                     'x-gaia-api-key': 'c06753f1-3e68-437d-b592-b94656ea5517',
-                    // 'x-lf-bu-code': user['x-lf-bu-code'],
-                    'x-lf-bu-code': 'C20400',
-                    // 'x-lf-channel': user['x-lf-channel'],
-                    'x-lf-channel': 'C2',
+                    'x-lf-bu-code': user['x-lf-bu-code'],
+                    'x-lf-channel': user['x-lf-channel'],
                     'origin': 'https://longzhu.longfor.com',
                     'referer': 'https://longzhu.longfor.com/',
                     'x-lf-dxrisk-source': user['x-lf-dxrisk-source'],
@@ -157,7 +155,8 @@ async function lotterySignin(user) {
                     'channel': user['x-lf-channel'],
                     'Origin': 'https://llt.longfor.com',
                     'X-LF-DXRisk-Token': user['x-lf-dxrisk-token'],
-                    'authtoken': user['x-lf-usertoken']
+                    'authtoken': user['x-lf-usertoken'],
+                    'token': user.token
                 },
                 type: 'post',
                 dataType: "json",
@@ -194,6 +193,7 @@ async function lotteryClock(user) {
                     'Origin': 'https://llt.longfor.com',
                     'X-LF-DXRisk-Token': user['x-lf-dxrisk-token'],
                     'authtoken': user['x-lf-usertoken'],
+                    'token': user.token,
                 },
                 type: 'post',
                 dataType: "json",
@@ -268,7 +268,26 @@ async function getBalance(user) {
         $.log(`⛔️ 查询用户珑珠失败！${e}\n`)
     }
 }
-//获取抽奖配置
+//查找 page/info 返回数据中的 turntablecom 组件
+function findComponentNoInData(data, targetName) {
+    if (!data || typeof data !== 'object') return null;
+    if (Array.isArray(data)) {
+        for (const item of data) {
+            const matched = findComponentNoInData(item, targetName);
+            if (matched) return matched;
+        }
+        return null;
+    }
+    if (data.comName === targetName && data.component_no) {
+        return data.component_no;
+    }
+    for (const key of Object.keys(data)) {
+        const matched = findComponentNoInData(data[key], targetName);
+        if (matched) return matched;
+    }
+    return null;
+}
+
 async function getLotteryConfigs(user) {
     try {
         const opts = {
@@ -287,17 +306,38 @@ async function getLotteryConfigs(user) {
         if (res?.data?.components) {
             const components = res.data.components;
             for (const comp of components) {
-                if (comp.children) {
-                    for (const child of comp.children) {
-                        if (child.taskId == '104048' && child.jumpUrl) {
-                            const url = child.jumpUrl;
-                            const match = url.match(/llt.longfor.com\/([^\/]+)\/([^\/]+)\//);
-                            if (match) {
-                                const activity_no = match[1];
-                                const component_no = match[2];
+                if (!comp.children || !Array.isArray(comp.children)) continue;
+                for (const child of comp.children) {
+                    if (child.taskId == '104048' && typeof child.jumpUrl === 'string') {
+                        const url = child.jumpUrl;
+                        $.log(`jumpUrl: ${url}`);
+                        const match = url.match(/llt\.longfor\.com\/([^\/]+)\/([^\/]+)\//);
+                        $.log(`match: ${match}`);
+                        if (match) {
+                            const activity_no = match[1];
+                            const page_no = match[2];
+                            const pageInfoUrl = `https://gw2c-hw-open.longfor.com/llt-gateway-prod/api/v1/page/info?activityNo=${activity_no}&pageNo=${page_no}`;
+                            $.log(`pageInfoUrl: ${pageInfoUrl}`);
+                            const pageInfoRes = await fetch({
+                                url: pageInfoUrl,
+                                headers: {
+                                    'Host': 'gw2c-hw-open.longfor.com',
+                                    'Cookie': user.cookie,
+                                    'User-Agent': 'com.longfor.supera/1.24.0 iOS/26.4.2',
+                                    'Accept': '*/*',
+                                    'Referer': 'https://llt.longfor.com/',
+                                    'Authorization': `Bearer ${user.token}`
+                                },
+                                type: 'get',
+                                dataType: 'json'
+                            });
+                            const component_no = findComponentNoInData(pageInfoRes?.data, 'turntablecom');
+                            if (component_no) {
                                 $.log(`🎉 获取抽奖配置成功: activity_no=${activity_no}, component_no=${component_no}\n`);
                                 return [{ activity_no, component_no }];
                             }
+                            $.log(`⚠️ page/info 未找到 turntablecom 组件，回退使用 pageNo 作为 component_no: ${page_no}`);
+                            return [{ activity_no, component_no: page_no }];
                         }
                     }
                 }
