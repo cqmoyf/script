@@ -1,7 +1,7 @@
 /**************************************
 脚本名称：龙湖签到 感谢leiyiyan、Sliverkiss提供的脚本帮助
 脚本作者：@cqmoyf
-更新日期：2026-05-05
+更新日期：2025-05-05
 
 ⚠️免责声明
 ------------------------------------------
@@ -322,11 +322,7 @@ async function getLotteryConfigs(user) {
                                 url: pageInfoUrl,
                                 headers: {
                                     'Host': 'gw2c-hw-open.longfor.com',
-                                    'Cookie': user.cookie,
-                                    'User-Agent': 'com.longfor.supera/1.24.0 iOS/26.4.2',
-                                    'Accept': '*/*',
-                                    'Referer': 'https://llt.longfor.com/',
-                                    'Authorization': `Bearer ${user.token}`
+                                    'X-Gaia-Api-Key': 'd1eb973c-64ec-4dbe-b23b-22c8117c4e8e'
                                 },
                                 type: 'get',
                                 dataType: 'json'
