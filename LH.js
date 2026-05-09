@@ -1,7 +1,7 @@
 /**************************************
 脚本名称：龙湖签到 感谢leiyiyan、Sliverkiss提供的脚本帮助
 脚本作者：@cqmoyf
-更新日期：2025-05-05
+更新日期：2026-05-05
 
 ⚠️免责声明
 ------------------------------------------
@@ -278,8 +278,8 @@ function findComponentNoInData(data, targetName) {
         }
         return null;
     }
-    if (data.comName === targetName && data.component_no) {
-        return data.component_no;
+    if (data.comName === targetName && data.data?.component_no) {
+        return data.data.component_no;
     }
     for (const key of Object.keys(data)) {
         const matched = findComponentNoInData(data[key], targetName);
@@ -327,7 +327,16 @@ async function getLotteryConfigs(user) {
                                 type: 'get',
                                 dataType: 'json'
                             });
-                            const component_no = findComponentNoInData(pageInfoRes?.data, 'turntablecom');
+                            let searchData = pageInfoRes?.data;
+                            if (searchData?.info && typeof searchData.info === 'string') {
+                                try {
+                                    const parsedInfo = JSON.parse(searchData.info);
+                                    searchData = { ...searchData, info: parsedInfo };
+                                } catch (e) {
+                                    $.log(`⚠️ info 字段解析失败: ${e.message}`);
+                                }
+                            }
+                            const component_no = findComponentNoInData(searchData, 'turntablecom');
                             if (component_no) {
                                 $.log(`🎉 获取抽奖配置成功: activity_no=${activity_no}, component_no=${component_no}\n`);
                                 return [{ activity_no, component_no }];
