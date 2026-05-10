@@ -1,7 +1,7 @@
 /**************************************
 脚本名称：龙湖签到 感谢leiyiyan、Sliverkiss提供的脚本帮助
 脚本作者：@cqmoyf
-更新日期：2026-05-10
+更新日期：2026-05-05
 
 ⚠️免责声明
 ------------------------------------------
@@ -110,7 +110,7 @@ async function signin(user) {
                     // 'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.48(0x18003029) NetType/4G Language/zh_CN miniProgram/wx50282644351869da',
                     'token': user.token,
                     'x-lf-dxrisk-token': user['x-lf-dxrisk-token'],
-                    'X-Gaia-Api-Key': user['x-Gaia-api-key'],
+                    'x-gaia-api-key': 'c06753f1-3e68-437d-b592-b94656ea5517',
                     'x-lf-bu-code': user['x-lf-bu-code'],
                     'x-lf-channel': user['x-lf-channel'],
                     'origin': 'https://longzhu.longfor.com',
@@ -150,7 +150,7 @@ async function lotterySignin(user) {
                     'Referer': 'https://llt.longfor.com/',
                     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.67(0x1800432e) NetType/WIFI Language/zh_CN miniProgram/wx50282644351869da',
                     'bucode': user['x-lf-bu-code'],
-                    'X-Gaia-Api-Key': user['x-Gaia-api-key'],
+                    'x-gaia-api-key': '2f9e3889-91d9-4684-8ff5-24d881438eaf',
                     'channel': user['x-lf-channel'],
                     'Origin': 'https://llt.longfor.com',
                     'X-LF-DXRisk-Token': user['x-lf-dxrisk-token'],
@@ -160,6 +160,7 @@ async function lotterySignin(user) {
                 type: 'post',
                 dataType: "json",
                 body: {
+                    // "component_no" : "CU15A06D41Y9ZECJ",
                     "component_no" : componentNo,
                     "activity_no": activityNo
                 }
@@ -186,7 +187,7 @@ async function lotteryClock(user) {
                     'Referer': 'https://llt.longfor.com/',
                     'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.67(0x1800432e) NetType/WIFI Language/zh_CN miniProgram/wx50282644351869da',
                     'bucode': user['x-lf-bu-code'],
-                    'X-Gaia-Api-Key': user['x-Gaia-api-key'],
+                    'x-gaia-api-key': '2f9e3889-91d9-4684-8ff5-24d881438eaf',
                     'channel': user['x-lf-channel'],
                     'Origin': 'https://llt.longfor.com',
                     'X-LF-DXRisk-Token': user['x-lf-dxrisk-token'],
@@ -220,7 +221,7 @@ async function getUserInfo(user) {
                 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.48(0x18003029) NetType/4G Language/zh_CN miniProgram/wx50282644351869da',
                 'Referer': 'https://servicewechat.com/wx50282644351869da/424/page-frame.html',
                 'token': user.token,
-                'X-Gaia-Api-Key': user['x-Gaia-api-key']
+                'X-Gaia-Api-Key': 'd1eb973c-64ec-4dbe-b23b-22c8117c4e8e'
             },
             type: 'post',
             dataType: "json",
@@ -247,7 +248,7 @@ async function getBalance(user) {
                 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.48(0x18003029) NetType/4G Language/zh_CN miniProgram/wx50282644351869da',
                 'Referer': 'https://servicewechat.com/wx50282644351869da/424/page-frame.html',
                 'token': user.token,
-                'X-Gaia-Api-Key': user['x-Gaia-api-key']
+                'X-Gaia-Api-Key': 'd1eb973c-64ec-8ff5-b23b-22c8117c4e8e'
             },
             type: 'post',
             dataType: "json",
@@ -308,20 +309,20 @@ async function getLotteryConfigs(user) {
                 for (const child of comp.children) {
                     if (child.taskId == '104048' && typeof child.jumpUrl === 'string') {
                         const url = child.jumpUrl;
-                        $.log(`jumpUrl: ${url}`);
+                        // $.log(`jumpUrl: ${url}`);
                         const match = url.match(/llt\.longfor\.com\/([^\/]+)\/([^\/]+)\//);
-                        $.log(`match: ${match}`);
+                        // $.log(`match: ${match}`);
                         if (match) {
                             const activity_no = match[1];
                             const page_no = match[2];
                             const pageInfoUrl = `https://gw2c-hw-open.longfor.com/llt-gateway-prod/api/v1/page/info?activityNo=${activity_no}&pageNo=${page_no}`;
-                            $.log(`pageInfoUrl: ${pageInfoUrl}`);
+                            // $.log(`pageInfoUrl: ${pageInfoUrl}`);
                             const pageInfoRes = await fetch({
                                 url: pageInfoUrl,
                                 headers: {
                                     'Host': 'gw2c-hw-open.longfor.com',
                                     'cookie': user.cookie,
-                                    'X-Gaia-Api-Key': user['x-Gaia-api-key']
+                                    'X-Gaia-Api-Key': '2f9e3889-91d9-4684-8ff5-24d881438eaf'
                                 },
                                 type: 'get',
                                 dataType: 'json'
@@ -337,10 +338,10 @@ async function getLotteryConfigs(user) {
                             }
                             const component_no = findComponentNoInData(searchData, 'turntablecom');
                             if (component_no) {
-                                $.log(`🎉 获取抽奖配置成功: activity_no=${activity_no}, component_no=${component_no}\n`);
+                                // $.log(`🎉 获取抽奖配置成功: activity_no=${activity_no}, component_no=${component_no}\n`);
                                 return [{ activity_no, component_no }];
                             }
-                            $.log(`⚠️ page/info 未找到 turntablecom 组件，回退使用 pageNo 作为 component_no: ${page_no}`);
+                            // $.log(`⚠️ page/info 未找到 turntablecom 组件，回退使用 pageNo 作为 component_no: ${page_no}`);
                             return [{ activity_no, component_no: page_no }];
                         }
                     }
@@ -370,7 +371,6 @@ async function getCookie() {
             'x-lf-usertoken': header['x-lf-usertoken'],
             "cookie": header.cookie,
             "x-lf-bu-code": header['x-lf-bu-code'],
-            "x-Gaia-api-key": header['x-Gaia-api-key'],
             'x-lf-dxrisk-source': header['x-lf-dxrisk-source']
         }
         const index = userCookie.findIndex(e => e.token == newData.token);
