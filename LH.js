@@ -243,24 +243,22 @@ async function getUserInfo(user) {
 async function getBalance(user) {
     try {
         const opts = {
-            url: "https://longzhu-api.longfor.com/lmember-member-open-api-prod/api/member/v1/balance",
+            url: "https://gw2c-hw-open.longfor.com/supera/member/api/bff/pages/v1_25_0/v2/user-lz-balance",
             headers: {
-                'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.48(0x18003029) NetType/4G Language/zh_CN miniProgram/wx50282644351869da',
-                'Referer': 'https://servicewechat.com/wx50282644351869da/424/page-frame.html',
-                'token': user.token,
-                'X-Gaia-Api-Key': 'd1eb973c-64ec-8ff5-b23b-22c8117c4e8e'
+                'cookie': user.cookie,
+                "Host": "gw2c-hw-open.longfor.com",
+                "X-LF-Channel": user['x-lf-channel'] || 'L0',
+                "X-LF-Bucode": user['x-lf-bu-code'] || 'L00602',
+                "lmToken": user.token
             },
-            type: 'post',
-            dataType: "json",
-            body: {
-                "channel": user['x-lf-channel'],
-                "bu_code": user['x-lf-bu-code'],
-                "token": user.token
-            }
+            type: 'get',
+            dataType: "json"
         }
+        // console.log("URL:", opts.url);
+        // console.log("Headers:", JSON.stringify(opts.headers, null, 2));
         let res = await fetch(opts);
         let balance = res?.data.balance || 0;
-        let expiring_lz = res?.data.expiring_lz || 0;
+        let expiring_lz = res?.data.expiringlz || 0;
         $.log(`🎉 ${res?.code == '0000' ? '您当前珑珠: ' + balance + ', 即将过期: ' + expiring_lz : res?.message}\n`);
         return res?.data
     } catch (e) {
