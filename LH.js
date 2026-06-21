@@ -110,7 +110,7 @@ async function signin(user) {
                     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.48(0x18003029) NetType/4G Language/zh_CN miniProgram/wx50282644351869da',
                     'token': user.token,
                     'x-lf-dxrisk-token': user['x-lf-dxrisk-token'],
-                    'x-gaia-api-key': 'c06753f1-3e68-437d-b592-b94656ea5517',
+                    'x-gaia-api-key': user['x-gaia-api-key'],
                     'x-lf-bu-code': user['x-lf-bu-code'],
                     'x-lf-channel': user['x-lf-channel'],
                     'origin': 'https://longzhu.longfor.com',
@@ -290,9 +290,9 @@ function findComponentNoInData(data, targetName) {
 async function getLotteryConfigs(user) {
     try {
         const opts = {
-            url: "https://gw2c-hw-open.longfor.com/supera/member/api/bff/pages/v1_24_0/publicApi/v1/pageConfig",
+            url: "https://gw2c-hw-open.longfor.com/supera/member/api/bff/pages/v1_26_0/publicApi/v1/pageConfig",
             headers: {
-                'X-LF-Api-Version': 'v1_24_0',
+                'X-LF-Api-Version': 'v1_26_0',
                 'X-LF-Bucode': 'L00602'
             },
             type: 'post',
@@ -371,6 +371,7 @@ async function getCookie() {
             'x-lf-usertoken': header['x-lf-usertoken'],
             "cookie": header.cookie,
             "x-lf-bu-code": header['x-lf-bu-code'],
+            "x-gaia-api-key": header['x-gaia-api-key']
             'x-lf-dxrisk-source': header['x-lf-dxrisk-source']
         }
         const index = userCookie.findIndex(e => e.token == newData.token);
