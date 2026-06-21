@@ -371,7 +371,7 @@ async function getCookie() {
             'x-lf-usertoken': header['x-lf-usertoken'],
             "cookie": header.cookie,
             "x-lf-bu-code": header['x-lf-bu-code'],
-            "x-gaia-api-key": header['x-gaia-api-key']
+            "x-gaia-api-key": header['x-gaia-api-key'],
             'x-lf-dxrisk-source': header['x-lf-dxrisk-source']
         }
         const index = userCookie.findIndex(e => e.token == newData.token);
