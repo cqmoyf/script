@@ -307,7 +307,7 @@ async function getLotteryConfigs(user) {
             for (const comp of components) {
                 if (!comp.children || !Array.isArray(comp.children)) continue;
                 for (const child of comp.children) {
-                    if (child.taskId == '104048' && typeof child.jumpUrl === 'string') {
+                    if (child.taskName == '会员页抽奖' && typeof child.jumpUrl === 'string') {
                         const url = child.jumpUrl;
                         // $.log(`jumpUrl: ${url}`);
                         const match = url.match(/llt\.longfor\.com\/([^\/]+)\/([^\/]+)\//);
