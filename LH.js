@@ -36,6 +36,10 @@ $.doFlag = { "true": "✅", "false": "⛔️" };
 //------------------------------------------
 const baseUrl = ""
 const _headers = {}
+const crypto = require('crypto');
+function md5(str) {
+    return crypto.createHash('md5').update(str).digest('hex');
+}
 
 //------------------------------------------
 const fetch = async (o) => {
@@ -95,11 +99,36 @@ async function main() {
         throw e
     }
 }
+// 在 signin 函数前添加签名生成函数
+function generateSign(params, token) {
+    const KEYS = {
+        app: "20jtGtg5TQ9V1A3Q4RsxBzJqb@^WUS%m",
+        microApp: "Q74eKtH5LePYfSjIiflUbCL2gxjTa7rF"
+    };
 
+    // 参数排序拼接
+    const sortedKeys = Object.keys(params).sort();
+    const paramStr = sortedKeys.map(k => `${k}=${params[k]}`).join("|");
+
+    // 拼接时间戳和密钥
+    const timestamp = Date.now();
+    const signStr = `${paramStr}&${timestamp}&${KEYS.microApp}`;
+
+    // MD5 哈希
+    const sign = md5(signStr);  // 需要引入 md5 库
+
+    return { timestamp, sign };
+}
+// 修改 signin 函数
 async function signin(user) {
     try {
         const results = [];
         for (const activityNo of activityNos) {
+            const body = { 'activity_no': activityNo };
+
+            // 🔧 生成签名
+            const { timestamp, sign } = generateSign(body, user.token);
+
             const opts = {
                 url: "https://gw2c-hw-open.longfor.com/lmarketing-task-api-mvc-prod/openapi/task/v1/signature/clock",
                 headers: {
@@ -113,30 +142,22 @@ async function signin(user) {
                     'origin': 'https://longzhu.longfor.com',
                     'referer': 'https://longzhu.longfor.com/',
                     'x-lf-dxrisk-source': user['x-lf-dxrisk-source'],
-                    'x-lf-usertoken': user['x-lf-usertoken']
+                    'x-lf-usertoken': user['x-lf-usertoken'],
+                    // 🔧 添加这两个头
+                    'X-LONGZHU-Sign': sign,
+                    'X-LONGZHU-TimeStamp': timestamp.toString(),
+                    'X-Client-Type': 'microApp'
                 },
                 type: 'post',
                 dataType: "json",
-                body: {
-                    'activity_no': activityNo
-                }
+                body: body
             };
 
             let res = await fetch(opts);
-
-            // 🔍 添加完整响应日志
             $.log(`📋 完整响应: ${JSON.stringify(res, null, 2)}\n`);
 
-            // 检查响应码
             if (res.code !== "0000") {
                 $.log(`❌ 签到失败! code: ${res.code}, message: ${res.message}\n`);
-                continue;
-            }
-
-            // 检查是否触发风控
-            if (res.data?.risk_code || res.data?.captcha_required) {
-                $.log(`⚠️ 触发风控! 需要验证码\n`);
-                $.log(`风控信息:${JSON.stringify(res.data)}\n`);
                 continue;
             }
 
@@ -146,7 +167,7 @@ async function signin(user) {
             if (res?.data?.is_popup == 1) {
                 $.log(`✅ 每日签到成功! 获得 ${reward_num} 分\n`);
             } else {
-                $.log(`ℹ️ 今日已签到（或签到未触发奖励）\n`);
+                $.log(`ℹ️ 今日已签到\n`);
             }
 
             const delaySec = Math.floor(Math.random() * 5) + 1;
