@@ -1,7 +1,7 @@
 /**************************************
 脚本名称：龙湖签到 感谢leiyiyan、Sliverkiss提供的脚本帮助
 脚本作者：@cqmoyf
-更新日期：2026-05-05
+更新日期：2026-07-20
 
 ⚠️免责声明
 ------------------------------------------
@@ -36,10 +36,6 @@ $.doFlag = { "true": "✅", "false": "⛔️" };
 //------------------------------------------
 const baseUrl = ""
 const _headers = {}
-const crypto = require('crypto');
-function md5(str) {
-    return crypto.createHash('md5').update(str).digest('hex');
-}
 
 //------------------------------------------
 const fetch = async (o) => {
@@ -99,40 +95,18 @@ async function main() {
         throw e
     }
 }
-// 在 signin 函数前添加签名生成函数
-function generateSign(params, token) {
-    const KEYS = {
-        app: "20jtGtg5TQ9V1A3Q4RsxBzJqb@^WUS%m",
-        microApp: "Q74eKtH5LePYfSjIiflUbCL2gxjTa7rF"
-    };
 
-    // 参数排序拼接
-    const sortedKeys = Object.keys(params).sort();
-    const paramStr = sortedKeys.map(k => `${k}=${params[k]}`).join("|");
-
-    // 拼接时间戳和密钥
-    const timestamp = Date.now();
-    const signStr = `${paramStr}&${timestamp}&${KEYS.microApp}`;
-
-    // MD5 哈希
-    const sign = md5(signStr);  // 需要引入 md5 库
-
-    return { timestamp, sign };
-}
-// 修改 signin 函数
+//签到
 async function signin(user) {
     try {
-        const results = [];
+        // 遍历所有 activity_no，分别签到
+        const results = []; // 用于存储签到结果
         for (const activityNo of activityNos) {
-            const body = { 'activity_no': activityNo };
-
-            // 🔧 生成签名
-            const { timestamp, sign } = generateSign(body, user.token);
-
             const opts = {
                 url: "https://gw2c-hw-open.longfor.com/lmarketing-task-api-mvc-prod/openapi/task/v1/signature/clock",
                 headers: {
                     'cookie': user.cookie,
+                    // 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 &MAIAWebKit_iOS_com.longfor.supera_1.24.0_202603271516_Default_3.3.1.0',
                     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.48(0x18003029) NetType/4G Language/zh_CN miniProgram/wx50282644351869da',
                     'token': user.token,
                     'x-lf-dxrisk-token': user['x-lf-dxrisk-token'],
@@ -142,87 +116,28 @@ async function signin(user) {
                     'origin': 'https://longzhu.longfor.com',
                     'referer': 'https://longzhu.longfor.com/',
                     'x-lf-dxrisk-source': user['x-lf-dxrisk-source'],
-                    'x-lf-usertoken': user['x-lf-usertoken'],
-                    // 🔧 添加这两个头
-                    'X-LONGZHU-Sign': sign,
-                    'X-LONGZHU-TimeStamp': timestamp.toString(),
-                    'X-Client-Type': 'microApp'
+                    'x-lf-usertoken': user['x-lf-usertoken']
                 },
                 type: 'post',
                 dataType: "json",
-                body: body
+                body: {
+                    'activity_no': activityNo
+                }
             };
 
             let res = await fetch(opts);
-            $.log(`📋 完整响应: ${JSON.stringify(res, null, 2)}\n`);
-
-            if (res.code !== "0000") {
-                $.log(`❌ 签到失败! code: ${res.code}, message: ${res.message}\n`);
-                continue;
-            }
-
-            const reward_num = res?.data?.is_popup == 1 ? res?.data?.reward_info[0]?.reward_num : 0;
-            results.push(reward_num);
-
-            if (res?.data?.is_popup == 1) {
-                $.log(`✅ 每日签到成功! 获得 ${reward_num} 分\n`);
-            } else {
-                $.log(`ℹ️ 今日已签到\n`);
-            }
-
+            const reward_num = res?.data?.is_popup == 1 ? res?.data?.reward_info[0]?.reward_num : 0
+            results.push(reward_num); // 将每次签到的结果存储到数组中
+            $.log(`${$.doFlag[res?.data?.is_popup == 1]} ${res?.data?.is_popup == 1 ? '每日签到: 成功, 获得' + res?.data?.reward_info[0]?.reward_num + '分' : '每日签到: 今日已签到'}\n`);
             const delaySec = Math.floor(Math.random() * 5) + 1;
-            $.log(`⏳ 随机等待 ${delaySec} 秒...\n`);
+            $.log(`⏳ 随机等待 ${delaySec} 秒...`);
             await $.wait(delaySec * 1000);
         }
-        return results.reduce((acc, cur) => acc + cur, 0);
+        return results.reduce((acc, cur) => acc + cur, 0); // 返回所有签到结果的总和
     } catch (e) {
-        $.log(`⛔️ 每日签到失败！${e}\n`);
+        $.log(`⛔️ 每日签到失败！${e}\n`)
     }
 }
-
-
-// //签到
-// async function signin(user) {
-//     try {
-//         // 遍历所有 activity_no，分别签到
-//         const results = []; // 用于存储签到结果
-//         for (const activityNo of activityNos) {
-//             const opts = {
-//                 url: "https://gw2c-hw-open.longfor.com/lmarketing-task-api-mvc-prod/openapi/task/v1/signature/clock",
-//                 headers: {
-//                     'cookie': user.cookie,
-//                     // 'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_7 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 &MAIAWebKit_iOS_com.longfor.supera_1.24.0_202603271516_Default_3.3.1.0',
-//                     'user-agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 15_8 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.48(0x18003029) NetType/4G Language/zh_CN miniProgram/wx50282644351869da',
-//                     'token': user.token,
-//                     'x-lf-dxrisk-token': user['x-lf-dxrisk-token'],
-//                     'x-gaia-api-key': user['x-gaia-api-key'],
-//                     'x-lf-bu-code': user['x-lf-bu-code'],
-//                     'x-lf-channel': user['x-lf-channel'],
-//                     'origin': 'https://longzhu.longfor.com',
-//                     'referer': 'https://longzhu.longfor.com/',
-//                     'x-lf-dxrisk-source': user['x-lf-dxrisk-source'],
-//                     'x-lf-usertoken': user['x-lf-usertoken']
-//                 },
-//                 type: 'post',
-//                 dataType: "json",
-//                 body: {
-//                     'activity_no': activityNo
-//                 }
-//             };
-
-//             let res = await fetch(opts);
-//             const reward_num = res?.data?.is_popup == 1 ? res?.data?.reward_info[0]?.reward_num : 0
-//             results.push(reward_num); // 将每次签到的结果存储到数组中
-//             $.log(`${$.doFlag[res?.data?.is_popup == 1]} ${res?.data?.is_popup == 1 ? '每日签到: 成功, 获得' + res?.data?.reward_info[0]?.reward_num + '分' : '每日签到: 今日已签到'}\n`);
-//             const delaySec = Math.floor(Math.random() * 5) + 1;
-//             $.log(`⏳ 随机等待 ${delaySec} 秒...`);
-//             await $.wait(delaySec * 1000);
-//         }
-//         return results.reduce((acc, cur) => acc + cur, 0); // 返回所有签到结果的总和
-//     } catch (e) {
-//         $.log(`⛔️ 每日签到失败！${e}\n`)
-//     }
-// }
 // 抽奖签到
 async function lotterySignin(user) {
     try {
