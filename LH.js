@@ -156,6 +156,7 @@ async function lotterySignin(user) {
                     // 'X-LF-DXRisk-Token': user['x-lf-dxrisk-token'],
                     'X-LF-DXRisk-Token': '699d3650mzfVOSH3trSm2duJ6rUyhaceRRpyaIX1',
                     'authtoken': user['x-lf-usertoken'],
+                    'X-LF-DXRisk-Captcha-Token': '19FCFEB9F84D1A43734FC75942F4422314343A479066615D110FC:6a72aab7gCNstAkv6o3HRLxhesMiqZdIQ6uoCni1',
                     'token': user.token
                 },
                 type: 'post',
